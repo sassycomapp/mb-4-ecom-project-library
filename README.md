@@ -6,19 +6,19 @@ Planning, documentation, and specification repository for the MB4 E-Commerce pro
 
 | Folder | Purpose |
 |---|---|
-| `pre-project/` | Developer's first-thoughts, scoping ideas, ideation notes (input to bdlf) |
-| `bdlf/` | bdlf orchestrator artifacts: devlog, ISA, BFT checkpoints |
-| `bdlf/bft/` | BFT checkpoint output files per stage |
+| `pre-project/` | Developer's first-thoughts, scoping ideas, ideation notes (input to pdlf) |
+| `pdlf/` | pdlf orchestrator artifacts: devlog, ISA, BFT checkpoints |
+| `pdlf/bft/` | BFT checkpoint output files per stage |
 | `adr/` | Architecture Decision Records |
 | `docs/` | Durable application documentation and specifications |
 | `wireframes/` | HTML wireframes, mockups, visual layout references |
 | `screens/` | Screen HTML mockups and compliance checklists |
 | `wip/` | Active work-in-progress |
 
-## bdlf
+## pdlf
 
-This project is managed using bdlf — a contiguous, stage-gated, memory-compounding
-development strategy. Type `/bdlf` in OpenCode to init or resume.
+This project is managed using pdlf — a contiguous, stage-gated, memory-compounding
+development strategy. Type `/pdlf` in OpenCode to init or resume.
 
 **Code repo:** `../mb4ecom/` (Anvil-connected, GitHub VC)
-**State file:** `~/.gstack/projects/mb4ecom/bdlf-state.md`
+**State file:** `~/.gstack/projects/mb4ecom/pdlf-state.md`

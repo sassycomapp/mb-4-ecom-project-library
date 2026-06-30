@@ -7,8 +7,8 @@ application (mb4ecom). It is not the live code repository.
 Its purpose is to:
 - produce validated documentation, specifications, and ADRs,
 - house wireframes and design artefacts that guide Anvil UI development,
-- store bdlf orchestrator artifacts (devlog, ISA, BFT checkpoints),
-- drive the bdlf development workflow for mb4ecom.
+- store pdlf orchestrator artifacts (devlog, ISA, BFT checkpoints),
+- drive the pdlf development workflow for mb4ecom.
 
 The live application code lives in `../mb4ecom/`. Read from it for context when needed.
 Do not treat this repo as the application implementation workspace.
@@ -27,10 +27,10 @@ Hard rule: never ever write to anvil.yaml.
 
 ### 2. Two-repo separation
 
-- This repo (`project-library/`) = planning, docs, ADRs, wireframes, bdlf artifacts. Does NOT go to Anvil.
+- This repo (`project-library/`) = planning, docs, ADRs, wireframes, pdlf artifacts. Does NOT go to Anvil.
 - Code repo (`../mb4ecom/`) = live Anvil code + anvil.yaml. Goes to Anvil via GitHub VC.
 - The agent writes to project-library freely. The agent writes to the code repo only during
-  bdlf stages 14–16 (frontend assembly, feature development, integration) and only for code
+  pdlf stages 14–16 (frontend assembly, feature development, integration) and only for code
   files — never anvil.yaml.
 
 ### 3. GBrain cross-contamination discipline
@@ -46,18 +46,18 @@ GBrain stores pages from multiple projects. To prevent cross-project contaminati
 - At Junction 0 (LEARN), query both this project's source AND the default source for prior
   learnings, but clearly separate "this project's prior art" from "other projects' learnings."
 
-### 4. bdlf artifact routing
+### 4. pdlf artifact routing
 
 | Artifact | Destination |
 |---|---|
-| Devlog, ISA, BFT checkpoints | `bdlf/` |
+| Devlog, ISA, BFT checkpoints | `pdlf/` |
 | ADRs | `adr/` |
 | Wireframes, mockups | `wireframes/` |
 | Screen HTML mockups | `screens/` |
 | Durable docs | `docs/` |
 | WIP files | `wip/` |
 | Pre-project first-thoughts | `pre-project/` |
-| State file | `~/.gstack/projects/mb4ecom/bdlf-state.md` |
+| State file | `~/.gstack/projects/mb4ecom/pdlf-state.md` |
 
 ### 5. Fact rule and certainty levels
 
@@ -70,24 +70,24 @@ GBrain stores pages from multiple projects. To prevent cross-project contaminati
 
 | Folder | Purpose |
 |---|---|
-| `pre-project/` | Developer's first-thoughts, scoping ideas, ideation notes (input to bdlf) |
-| `bdlf/` | bdlf orchestrator artifacts: devlog, ISA, BFT checkpoints |
-| `bdlf/bft/` | BFT checkpoint output files per stage |
+| `pre-project/` | Developer's first-thoughts, scoping ideas, ideation notes (input to pdlf) |
+| `pdlf/` | pdlf orchestrator artifacts: devlog, ISA, BFT checkpoints |
+| `pdlf/bft/` | BFT checkpoint output files per stage |
 | `adr/` | Architecture Decision Records — one decision per file |
 | `docs/` | Durable application documentation, specs, UI standards, DESIGN.md |
 | `wireframes/` | HTML wireframes, mockups, and visual layout references |
 | `screens/` | Screen HTML mockups and their compliance checklists |
 | `wip/` | Active work-in-progress: current plans, prompts, and files being prepared |
 
-## bdlf workflow
+## pdlf workflow
 
-This project is managed using bdlf — a contiguous, stage-gated, memory-compounding
-development strategy. Type `/bdlf` in OpenCode to init or resume.
+This project is managed using pdlf — a contiguous, stage-gated, memory-compounding
+development strategy. Type `/pdlf` in OpenCode to init or resume.
 
-- **bdlf home:** `C:\bdlf\` (skill, templates, registry — shared across all projects)
-- **State file:** `~/.gstack/projects/mb4ecom/bdlf-state.md` (machine resume token)
-- **Devlog:** `bdlf/devlog.md` (human append-only audit trail)
-- **ISA:** `bdlf/isa.md` (living done-definition)
+- **pdlf home:** `C:\pdlf\` (skill, templates, registry — shared across all projects)
+- **State file:** `~/.gstack/projects/mb4ecom/pdlf-state.md` (machine resume token)
+- **Devlog:** `pdlf/devlog.md` (human append-only audit trail)
+- **ISA:** `pdlf/isa.md` (living done-definition)
 - **GBrain source:** `mb4ecom` (isolated — scoped queries only)
 
 ## Safety rules
