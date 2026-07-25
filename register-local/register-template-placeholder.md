@@ -1,9 +1,9 @@
 ---
-document: Register Template
-version: V1
-status: template
+document: Register — {PROJECT-NAME or project-library-global}
+doc-id: mb4ecom-0004
+state: Live
+date-created: 2026-07-25T214644+0200
 ---
-
 # Register — {PROJECT-NAME or project-library-global}
 
 Append-only. Rows are never deleted. Only `state`, `date-state-changed`,
