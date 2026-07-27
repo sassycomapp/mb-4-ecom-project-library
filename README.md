@@ -1,6 +1,6 @@
 ---
 document: README — project-library [mb4ecom]
-doc-id: mb4ecom-0002
+doc-id: mb4ecom-0006
 state: Live
 date-created: 2026-07-27T115406+0200
 ---

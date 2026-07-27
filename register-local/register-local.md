@@ -13,8 +13,8 @@ All other fields are permanent from first registration.
 
 | doc-id | filename | folder | type | state | date-registered | date-state-changed | superseded-by | notes |
 |---|---|---|---|---|---|---|---|---|
-| mb4ecom-0001 | AGENTS.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
-| mb4ecom-0002 | README.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0005 | AGENTS.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0006 | README.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
 | mb4ecom-0001 | docs/agents/domain.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
 | mb4ecom-0002 | docs/agents/issue-tracker.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
 | mb4ecom-0003 | docs/agents/triage-labels.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |

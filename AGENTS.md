@@ -1,6 +1,6 @@
 ---
 document: AGENTS.md — project-library [mb4ecom]
-doc-id: mb4ecom-0001
+doc-id: mb4ecom-0005
 state: Live
 date-created: 2026-07-27T115406+0200
 ---
