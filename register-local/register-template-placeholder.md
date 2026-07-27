@@ -1,10 +1,11 @@
 ---
-document: Register — {PROJECT-NAME or project-library-global}
+document: Register — mb4ecom-project-library
 doc-id: mb4ecom-0004
 state: Live
 date-created: 2026-07-25T214644+0200
 ---
-# Register — {PROJECT-NAME or project-library-global}
+
+# Register — mb4ecom-project-library
 
 Append-only. Rows are never deleted. Only `state`, `date-state-changed`,
 `superseded-by`, and `notes` may be updated in place after a row is created.
@@ -12,7 +13,11 @@ All other fields are permanent from first registration.
 
 | doc-id | filename | folder | type | state | date-registered | date-state-changed | superseded-by | notes |
 |---|---|---|---|---|---|---|---|---|
-| | | | | | | | | |
+| mb4ecom-0001 | AGENTS.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0002 | README.md | . | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0001 | docs/agents/domain.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0002 | docs/agents/issue-tracker.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
+| mb4ecom-0003 | docs/agents/triage-labels.md | docs/agents | guide | Live | 2026-07-27T124852+0200 | 2026-07-27T124852+0200 | | |
 
 ## Field definitions
 
@@ -21,9 +26,7 @@ All other fields are permanent from first registration.
 - **folder** — folder within the corpus this document lives in.
 - **type** — document type (adr / spec / policy / guide / checklist / sop / template / other).
 - **state** — one of: `Live`, `Retired`, `Quarantine`. Mirrors the document's own front-matter `state` field.
-- **date-registered** — date this row was first appended. Never changes. Format:
-  `YYYY-MM-DDTHHMMSS+0200` (Filename-Safe ISO 8601, UTC+2), per `global-0037`.
-- **date-state-changed** — date `state` last changed. Updated whenever state flips.
-  Same format as date-registered.
+- **date-registered** — date this row was first appended. Never changes. Format: `YYYY-MM-DDTHHMMSS+0200`, per `global-0037`.
+- **date-state-changed** — date `state` last changed. Updated whenever state flips. Same format as date-registered.
 - **superseded-by** — doc-id of the version that replaced this one, if state is Retired due to versioning. Blank otherwise.
 - **notes** — free text, optional.
