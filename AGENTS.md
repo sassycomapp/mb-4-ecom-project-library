@@ -1,3 +1,10 @@
+---
+document: AGENTS.md — project-library [mb4ecom]
+doc-id: mb4ecom-0001
+state: Live
+date-created: 2026-07-27T115406+0200
+---
+
 # AGENTS.md — project-library [mb4ecom]
 
 > Inherits Global `AGENTS.md` in full. This file adds project-specific rules only.

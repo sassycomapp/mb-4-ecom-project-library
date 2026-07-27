@@ -1,3 +1,10 @@
+---
+document: README — project-library [mb4ecom]
+doc-id: mb4ecom-0002
+state: Live
+date-created: 2026-07-27T115406+0200
+---
+
 # MB4 E-Commerce — Project Library
 
 Planning, documentation, and specification repository for the MB4 E-Commerce project.
