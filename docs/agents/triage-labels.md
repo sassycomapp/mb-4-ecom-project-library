@@ -1,6 +1,8 @@
 ---
+title: "triage-labels"
 document: Triage Labels
-doc-id: mb4ecom-0003
+doc-id: "mb-f56caed2"
+updated: "2026-10-06"
 state: Live
 date-created: 2026-07-25T214644+0200
 ---

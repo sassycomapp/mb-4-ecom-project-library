@@ -1,6 +1,8 @@
 ---
+title: "domain"
 document: Domain Docs
-doc-id: mb4ecom-0001
+doc-id: "mb-7efb8e65"
+updated: "2026-10-06"
 state: Live
 date-created: 2026-07-25T214644+0200
 ---

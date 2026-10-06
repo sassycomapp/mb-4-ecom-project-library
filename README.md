@@ -1,6 +1,8 @@
 ---
+title: "README"
 document: README — project-library [mb4ecom]
-doc-id: mb4ecom-0006
+doc-id: "mb-41a7b3cc"
+updated: "2026-10-06"
 state: Live
 date-created: 2026-07-27T115406+0200
 ---
