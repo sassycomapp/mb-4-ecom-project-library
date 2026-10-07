@@ -2,7 +2,7 @@
 title: "README"
 document: README — project-library [mb4ecom]
 doc-id: "mb-41a7b3cc"
-updated: "2026-10-06"
+updated: "2026-10-07"
 state: Live
 date-created: 2026-07-27T115406+0200
 ---
@@ -31,3 +31,7 @@ development strategy. Type `/pdlf` in OpenCode to init or resume.
 
 **Code repo:** `../mb4ecom/` (Anvil-connected, GitHub VC)
 **State file:** `~/.gstack/projects/mb4ecom/pdlf-state.md`
+
+## Status
+
+**Placeholder.** mb4ecom is a future project, modelled largely on mb-3-cs. It has not been scoped yet. It is a live project: in scope, a registered GBrain source and GitHub repository, and on the commit-all list, although this library is still empty.
