@@ -1,5 +1,7 @@
 ---
 title: "schema-migration-log"
+doc-id: "mb-897d0bc6"
+updated: "2026-10-22"
 ---
 # Schema Migration Log
 
