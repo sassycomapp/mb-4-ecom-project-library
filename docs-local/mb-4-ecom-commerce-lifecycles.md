@@ -68,6 +68,7 @@ A product is deleted only when the product has never been in a cart or an order.
 `carts.status`: `active`, `at_payment`, `completed`, `abandoned`, `expired`.
 
 - **Created `active`** when a customer first adds an item. The browser keeps `cart_token`. A signed-in customer's cart also carries `contact_id`, so the cart follows the customer to another device.
+- **Currency.** The cart's currency is the currency of the zone of the delivery address, or of the customer's country before an address is given. Prices come from an active price list in that currency, or else from the base price converted at the zone's exchange rate and rounded by the zone's rounding rule. The customer sees, pays and is invoiced in the cart's currency.
 - **Every change** (item added, quantity changed, address, delivery option or discount code changed) recomputes the line prices, discounts, delivery charge, tax and totals on the server, in that order. The browser never sends a price.
 - **Tax.** With `shop_settings.tax_engine` `manual`, tax comes from the zone's rate for each line's tax class. With `stripe_tax`, the server sends the lines, delivery charge and address to the Stripe Tax calculation service once the address is complete, and uses the tax Stripe Tax returns. A business customer who gives a valid VAT number is charged tax as Stripe Tax returns the tax (reverse charge where reverse charge applies); with `manual`, a business customer abroad with a VAT number is charged no tax. With tax-inclusive prices, the price stays the same and the tax inside the price follows the zone.
 - **Who is buying.** When `shop_settings.sells_to` is `both`, checkout asks whether the customer is buying as a private person or for a business. A business customer gives a company name and may give a VAT number. When `sells_to` is `consumers` or `businesses`, the question is not asked.
@@ -93,8 +94,8 @@ An order has three statuses, each answering one question:
 
 ### 4.1 Status
 
-- **Created `placed`** when an online cart's payment succeeds. In the same transaction: the order number is taken from `shop_counters`, the lines are copied with the lines' snapshots, reservations are committed, discount redemptions are recorded and `used_count` raised, the customer is matched to a contact by email or a new contact is created (source `order`), the paid invoice is issued through the common invoicing feature, and the order confirmation email is queued.
-- **Created `placed` on invoice** when a signed-in customer with an `active` credit account chooses Pay on invoice and the order total plus `customer_accounts.balance_outstanding` is within `credit_limit`. No payment provider payment is opened. In one transaction the order is placed as above, with `payment_status` `unpaid` and `pay_on_invoice` set; the invoice is issued with the account's payment terms and sent; and the account's balance rises. The common invoicing feature sends overdue reminders, and the recorded payment of the invoice moves the order to `paid` and lowers the balance. When the total would pass the limit, Pay on invoice is not offered for that order.
+- **Created `placed`** when an online cart's payment succeeds, or when gift cards cover the cart's whole total. In the same transaction: the order number is taken from `shop_counters`, the order's currency and the zone's exchange rate are recorded and `total_system` is worked out, the lines are copied with the lines' snapshots, reservations are committed, discount redemptions are recorded and `used_count` raised, the customer is matched to a contact by email or a new contact is created (source `order`), the paid invoice is issued through the common invoicing feature, and the order confirmation email is queued.
+- **Created `placed` on invoice** when a signed-in customer with an `active` credit account chooses Pay on invoice and the order total, converted to the system currency at the zone's exchange rate, plus `customer_accounts.balance_outstanding` is within `credit_limit`. No payment provider payment is opened. In one transaction the order is placed as above, with `payment_status` `unpaid` and `pay_on_invoice` set; the invoice is issued with the account's payment terms and sent; and the account's balance rises. The common invoicing feature sends overdue reminders, and the recorded payment of the invoice moves the order to `paid` and lowers the balance. When the total would pass the limit, Pay on invoice is not offered for that order.
 - **Created `draft`** when a team member builds an order for a customer (by phone, in person or for a trade customer). A draft holds no stock and can be edited freely.
 - `draft` → `placed`: the team member places the order. Stock is reserved and committed at once. The order is either paid by a payment link sent to the customer, or marked paid by cash or bank transfer through the common payments feature.
 - `placed` → `completed`: every physical line is delivered or collected, and every digital line has been made available. Sets `completed_at`. Returns remain possible within the return window.
@@ -135,13 +136,13 @@ An order with only digital lines goes straight to `delivered` when the order is 
 
 The shop uses the common payments feature and the payment providers Stripe and PayPal. Every payment and refund is a row of the common `payments` table, linked from `orders.payment_ids`.
 
-- **Opening a payment.** When the cart goes to payment, the server creates a checkout with the payment provider for the cart's total in the system currency and stores the checkout reference in `carts.gateway_session_ref`. Card details never reach Mybizz ([[[default:adr-global/adr-payment-security-boundary-vault|Payment Security Boundary]]](C:/dev/project-library-global/adr-global/adr-payment-security-boundary-vault.md)).
+- **Opening a payment.** When the cart goes to payment, the server creates a checkout with the payment provider for the cart's total, less any gift card amount, in the cart's currency and stores the checkout reference in `carts.gateway_session_ref`. Card details never reach Mybizz ([[[default:adr-global/adr-payment-security-boundary-vault|Payment Security Boundary]]](C:/dev/project-library-global/adr-global/adr-payment-security-boundary-vault.md)).
 - **Charged at once.** The payment is captured when the customer pays. Mybizz does not hold authorised-but-uncaptured payments.
 - **Tax record.** With `stripe_tax`, the order's tax calculation is recorded as a Stripe Tax transaction when the order is placed, and reversed in proportion with every refund, so the client's tax reports in Stripe match the shop.
 - **Succeeded.** The payment provider's webhook marks the payment `succeeded`. The webhook's background task places the order (section 4.1) in one transaction.
 - **Failed.** The payment is `failed`, the cart returns to `active` and the customer may try again.
 - **Late payment.** If a payment succeeds after the cart's hold has expired, the server tries to reserve the stock again inside the same transaction that places the order. If the stock is still available, the order is placed as normal. If not, the payment is refunded in full at once, and the customer and the Owner are emailed.
-- **Refunds.** A refund is made from the order or from a return, for any amount up to the amount paid less earlier refunds. The refund is sent through the payment provider that took the payment, or recorded as a manual refund for cash or bank transfer, and is a `payments` row of `kind` `refund`. `orders.refunded_total` and `payment_status` follow.
+- **Refunds.** A refund is made from the order or from a return, for any amount up to the amount paid less earlier refunds. The refund is made in the order's currency, through the payment provider that took the payment, or recorded as a manual refund for cash or bank transfer, and is a `payments` row of `kind` `refund`. `orders.refunded_total` and `payment_status` follow.
 
 ---
 
@@ -245,6 +246,30 @@ The shop uses the common payments feature and the payment providers Stripe and P
 - **Choosing `stripe_tax`.** The setting shows a link to the Stripe Tax documentation (`https://docs.stripe.com/tax`) beside the choice. The Owner connects Stripe Tax with the client's own Stripe account; the secret key is kept in the Vault. The method takes effect for carts changed after the connection succeeds.
 - **Choosing `manual`.** A Material 3 dialog from the m3-custom-theme components opens. The dialog has no close button, does not close on a click outside the dialog or on the Escape key, and has one action: Accept. The dialog states, in plain words, that the client accepts that Mybizz is not responsible for the client's VAT and other tax obligations, and that the client must meet the legal requirements of every transaction the shop makes. The dialog links to the client's legal responsibility acknowledgement; the dialog itself is not a legal document. Accepting sets `tax_responsibility_accepted_at` and `tax_responsibility_accepted_by`, and writes an `activity_log` entry. The method takes effect only after acceptance.
 - **Every switch to `manual`** opens the dialog again.
+
+---
+
+## 13. Gift card
+
+`gift_cards.status`: `active`, `used`, `expired`, `disabled`.
+
+- **Sold** as a product of kind `gift_card`, in amounts the client sets. When the order is placed, the gift card is created `active` in the order's currency, and the code is emailed to the recipient, or to the purchaser when no recipient is given. A team member can also issue a gift card, for example as a goodwill gesture; that issue is recorded with the team member.
+- **Spent at checkout.** The customer enters the code; the server checks that the gift card is `active`, in the cart's currency and not expired, and applies the lower of the balance and the amount due. The rest is paid through a payment provider, or nothing is due when the gift card covers the whole order. The amount is taken from the balance, with a `spent` transaction, inside the transaction that places the order.
+- **Refunds.** A refund of an order paid partly by gift card returns the gift card part to the gift card first, with a `refunded` transaction, and the rest through the payment provider.
+- `active` → `used`: the balance reaches zero. `used` → `active` when a refund raises the balance.
+- `active` → `expired`: `expires_at` passes; the remaining balance is recorded with an `expired` transaction.
+- `active` → `disabled`: a team member stops a lost or misused code. `disabled` → `active`: a team member restores the gift card.
+- **Tax.** The sale of a gift card carries no tax: tax is charged on the goods the gift card later pays for. The gift card product's tax class is `exempt`.
+- **The money.** A gift card is paid for through the client's own payment provider account, like any order. Mybizz never holds gift card money.
+
+---
+
+## 14. Product feed
+
+- **Built every hour** by a scheduled task, for every enabled feed: one line per published variant of each product with `in_product_feeds` set, with the title, description, link to the product page, image, price and sale price in the feed zone's currency, availability from stock, brand, condition, barcode, Google product category, and the delivery charge and tax of the zone. The file is stored in the client's R2 bucket through `files`.
+- **Read by the channel.** The client pastes the feed's web address into Google Merchant Center, Meta Commerce Manager or TikTok Catalog Manager once. Each channel then fetches the feed on the channel's own schedule, and `last_read_at` records each fetch.
+- **Selling.** Shoppers who click a product on Google, Facebook, Instagram or TikTok land on the product page of the client's own shop and buy there, through the client's own checkout.
+- **Changes reach the channels** within an hour plus the channel's own fetch interval: a price change, a sold-out variant or an archived product.
 
 ---
 

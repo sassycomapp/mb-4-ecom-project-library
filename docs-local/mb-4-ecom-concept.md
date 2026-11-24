@@ -12,18 +12,18 @@ updated: "2026-11-24"
 
 This document is the concept of Mybizz Shop: what the business is, who Mybizz Shop serves, what the product does, the rules Mybizz Shop never breaks, the price and the market position. Every statement in this document is a decision.
 
-The shop features are named and numbered (F-S01 to F-S14) in `mb-4-ecom-commerce-feature-list.md`, specified in `mb-4-ecom-commerce-schema.md` and `mb-4-ecom-commerce-lifecycles.md`, and placed in the architecture by `mb-4-ecom-architecture-report.md`.
+The shop features are named and numbered (F-S01 to F-S16) in `mb-4-ecom-commerce-feature-list.md`, specified in `mb-4-ecom-commerce-schema.md` and `mb-4-ecom-commerce-lifecycles.md`, and placed in the architecture by `mb-4-ecom-architecture-report.md`.
 
 ---
 
 ## 1. What Mybizz Shop Is
 
-Mybizz Shop is an online shop and a complete back office for small product businesses, sold as a subscription. Mybizz Shop is one of the Mybizz businesses, with the slug `mb-4-ecom`.
+Mybizz Shop is an online shop and a complete back office for businesses that sell goods, sold as a subscription. Mybizz Shop is one of the Mybizz businesses, with the slug `mb-4-ecom`.
 
 Mybizz Shop is built from two parts:
 
 - **The common part**, shared by every Mybizz application and carried by the project template: website, blog and landing pages, CRM, email on the client's own domain with a team inbox, marketing sequences, invoicing and payments, built-in accounts, the Clause Builder, reviews, AI assists and voice, the customer portal, the dashboard, backups and data ownership, security, design and support.
-- **The shop part** (the trade part): catalogue, pricing, stock, cart, checkout, orders, delivery with courier providers, returns, tax, discounts, zones, credit accounts for business customers, and dispute handling.
+- **The shop part** (the trade part): catalogue, pricing, stock, cart, checkout, orders, delivery with courier providers, returns, tax, discounts, zones and selling currencies, product feeds to Google, Facebook, Instagram and TikTok, gift cards, credit accounts for business customers, and dispute handling.
 
 **Promise:** one subscription runs the whole shop business: the shop, the customers, the marketing, the email and the books, with nothing extra to buy.
 
@@ -31,7 +31,7 @@ Mybizz Shop is built from two parts:
 
 ## 2. The Problem Mybizz Shop Solves
 
-- A small product business pays for a shop platform, then for a stack of add-on apps: email marketing, reviews, customer service inbox, accounting, legal policies, tax calculation, label printing and business email. The add-ons often cost more than the shop platform.
+- A business that sells online pays for a shop platform, then for a stack of add-on apps: email marketing, reviews, customer service inbox, accounting, legal policies, tax calculation, label printing and business email. The add-ons often cost more than the shop platform.
 - The add-ons do not share one customer record, so the business has no single view of a customer.
 - Shop platforms add a surcharge on every sale when the business uses Stripe or PayPal instead of the platform's own payment service.
 - Business customers who buy on account (30-day terms, credit limits) are poorly served by consumer shop platforms.
@@ -41,10 +41,10 @@ Mybizz Shop is built from two parts:
 
 ## 3. Who Mybizz Shop Serves
 
-- **Small product businesses** in the UK, Europe, the USA and Canada that sell physical or digital goods online: makers, independent brands, specialist retailers and wholesalers.
-- **Size:** 1 to 20 team members, selling roughly £3,000 to £150,000 a month online. Below that range, a free or entry-level shop builder is enough. Above that range, a business needs enterprise platforms.
-- **Sales model:** direct to private customers, to business customers on account, or both.
-- **Typical client:** an owner-run business that already sells, is tired of paying for and connecting many apps, and wants one system the team can run.
+- **Any business that sells goods online,** physical or digital, of any kind except property, in the UK, Europe, the USA and Canada.
+- **Sales model:** to private customers (B2C), to business customers (B2B), or both.
+- **Size:** from a business taking the business's first orders to an established business with a large catalogue and a full team. A client whose shop outgrows a standard client instance moves to Mybizz Shop Enterprise (section 7).
+- **Typical client:** a business that sells on a shop platform with a stack of paid apps, and wants one system the whole team runs.
 
 ---
 
@@ -74,7 +74,7 @@ Mybizz Shop is built from two parts:
 
 ## 6. The Product
 
-The product is the common part of every Mybizz application plus the shop part. The shop part is F-S01 to F-S14 of `mb-4-ecom-commerce-feature-list.md`:
+The product is the common part of every Mybizz application plus the shop part. The shop part is F-S01 to F-S16 of `mb-4-ecom-commerce-feature-list.md`:
 
 | Feature | Name |
 |---|---|
@@ -92,6 +92,8 @@ The product is the common part of every Mybizz application plus the shop part. T
 | F-S12 | Zones and currency |
 | F-S13 | Credit accounts |
 | F-S14 | Legal terms and disputes |
+| F-S15 | Product feeds |
+| F-S16 | Gift cards |
 
 The common part is defined by the project template when Mybizz CS is finished. The features of the common part that the shop uses are listed in `mb-4-ecom-commerce-feature-list.md`, section "What the shop uses from the common part".
 
@@ -104,6 +106,7 @@ The common part is defined by the project template when Mybizz CS is finished. T
 - Month-to-month, no contract; cancel at any time, effective at the end of the paid month.
 - No Mybizz transaction fee and no add-ons.
 - Assisted setup, where Mybizz loads the catalogue and configures the shop, costs one month's subscription, once.
+- **Mybizz Shop Enterprise:** a client whose shop needs more than a standard client instance (very large catalogues, high order volumes or large sales events) runs on an application server of the client's own, sized to the shop. Mybizz Shop Enterprise is priced by agreement with each client: the subscription plus the cost of the dedicated server and the server's database capacity.
 - The same price as Mybizz CS. Every Mybizz business application with the full common part carries the same price, so the Mybizz price list stays one rule: £45 for the front desk (Mybizz FDA), £119 for a full business application.
 
 ---
@@ -134,6 +137,7 @@ UK shop owners on Shopify commonly spend a further £50 to £500 a month on apps
 - The client's own data in the client's own storage, kept on leaving.
 - AI assists and voice across the business.
 - No transaction surcharge for using Stripe or PayPal.
+- Selling in the customer's own currency, product feeds to Google, Facebook, Instagram and TikTok, and gift cards, all included.
 
 ---
 
@@ -175,7 +179,7 @@ UK shop owners on Shopify commonly spend a further £50 to £500 a month on apps
 | Risk | Answer |
 |---|---|
 | Shopify's brand and app choice draw the market | Mybizz Shop sells on total monthly cost and one system, not on the shop alone; the comparison in section 8 is the core sales message |
-| A client's sales spike slows the client's shop | Each client runs in a separate instance; App 5 flags instances near the plan tier's limit, and the tier is raised before high-traffic events |
+| A client's sales spike slows the client's shop | Each client runs in a separate container; App 5 raises a busy container's memory automatically, and a shop that outgrows a standard client instance moves to Mybizz Shop Enterprise on a dedicated server |
 | Tax and consumer law vary by country | Stripe Tax for automatic rates, consumer rule sets per zone, and the client's acceptance of the client's own legal and tax responsibility |
 | Providers change terms or prices | The client's own provider accounts carry the providers' terms; Mybizz Shop supports two payment providers and two courier providers, so no single provider is essential |
 | Disputes and chargebacks | Disputes arrive automatically with deadlines, alerts and an evidence pack built from the order, the accepted policies and the tracking record |

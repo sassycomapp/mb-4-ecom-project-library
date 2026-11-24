@@ -49,10 +49,11 @@ The shop's commerce structure follows Medusa (`medusajs.com`, v2.22.1), an open-
 
 `mb-4-ecom` uses the five-app structure exactly as every Mybizz application does ([[[default:specifications-global/spec-five-app-architecture-model|Five-App Architecture Model]]](C:/dev/project-library-global/specifications-global/spec-five-app-architecture-model.md)).
 
-- **Never multi-tenant.** Each client shop is a separate Anvil app with a separate database, on an Anvil account held by Mybizz and named after the client's business.
+- **Never multi-tenant.** Each client shop is a separate client instance (App 4) with a separate database ([[[default:specifications-global/spec-client-instance-hosting|Client Instance Hosting]]](C:/dev/project-library-global/specifications-global/spec-client-instance-hosting.md)).
+- **Where a client instance runs.** Each client instance is a Docker container running the Anvil App Server on a Mybizz Hetzner Cloud application server (`CPX42`: 8 vCPU, 16 GB memory), with the client's own database in Mybizz's Ubicloud managed PostgreSQL service. An application server holds 12 places; a standard container has 1 GiB of memory and takes one place, and App 5 raises a busy container to 2 GiB (two places) automatically. Each client database user holds at most 3 database connections, with a 60-second statement timeout.
 - **Load stays in each client instance.** A client's transactions run in the client's own instance. App 2 is a code dependency and carries no client traffic, so 100 clients running 100 transactions each place 100 transactions on each instance and none on App 2.
 - **Isolation.** One client's traffic, fault or heavy query cannot slow down or expose another client.
-- **Plan tiers.** Every client instance starts on Anvil's Hobby tier. When a client's volume grows, the Anvil tier of that client's instance is raised, or server resources are added to that instance, with no change to App 2.
+- **Mybizz Shop Enterprise.** A client whose shop needs more than a standard container runs on an application server of the client's own, with the container's memory and the client's database connections sized to the shop. The client instance is built from the same release image as every other client instance, so App 2 and every release stay the same.
 
 ## 4. Data design
 
@@ -72,20 +73,20 @@ The shop's commerce structure follows Medusa (`medusajs.com`, v2.22.1), an open-
 ## 6. Management and health
 
 - Each client instance pushes a heartbeat of the instance's health and resource use (load, errors, order volume, storage) to App 5 on a schedule. App 5 never polls the instances, so App 5 does not slow down as the number of clients grows.
-- App 5 flags any client instance approaching the limits of the instance's plan tier, so the tier is raised before customers notice.
+- App 5 raises a container to 2 GiB when the container's memory use passes 80%, and messages the developer. A client instance that stays near the 2 GiB limit or the database connection limit is a candidate for Mybizz Shop Enterprise.
 
 ## 7. Resilience
 
 - **Webhooks** from providers (payments, shipping, tax, disputes) return 200 at once, are processed in a background task, and are idempotent by event id, so a provider's retry never charges or ships an order twice.
 - **Outbound calls** to providers retry with backoff when rate-limited. Rate limits apply per client instance.
-- **Background tasks** (stock alerts, reports, imports) stay within the background-task limits of the client instance's plan tier.
-- **Traffic spikes.** An instance that receives a sudden spike (for example a flash sale) can respond slowly at first. When a client plans a high-traffic event, the tier of the client's instance is raised before the event.
+- **Background tasks** (stock alerts, product feeds, reports, imports) run inside the client's container and share the container's memory and database connections with the shop, so heavy tasks run in the quiet hours.
+- **Traffic spikes.** Product images and digital files are served from the client's R2 bucket, outside the container. A sudden spike of shoppers (for example a flash sale) queues on the container's 3 database connections, so the shop responds slowly at the peak. A client who plans large sales events moves to Mybizz Shop Enterprise before the event.
 
 ## 8. Anvil's limits, accepted
 
 - No push connections to the browser: near-real-time updates use polling.
-- Background-task concurrency is limited per plan tier.
-- The application is bound to Anvil: the forms and the server-call layer would be rewritten to move elsewhere. Anvil is chosen for managed hosting, Python throughout, and the dependency model that makes the five-app structure possible.
+- Each standard client instance shares an application server with up to 11 other client instances, with the memory and database connection limits of section 3.
+- The application is bound to Anvil: the forms and the server-call layer would be rewritten to move elsewhere. Anvil is chosen for Python throughout and the dependency model that makes the five-app structure possible; the Anvil App Server runs each client instance on Mybizz's own servers.
 
 ## 9. Product directions
 
@@ -98,4 +99,4 @@ These are candidate features that use the five-app structure and Python to set `
 
 ## 10. What is particular to mb-4-ecom
 
-Everything in sections 3 to 8 applies the common aspects. What is particular to `mb-4-ecom` is the shop: the commerce domain mapped to Anvil (section 2), the schema, the lifecycles and the features of the three shop documents, and the product directions (section 9).
+Everything in sections 3 to 8 applies the common aspects, except Mybizz Shop Enterprise, which is particular to `mb-4-ecom`. What is particular to `mb-4-ecom` is the shop: the commerce domain mapped to Anvil (section 2), the schema, the lifecycles and the features of the three shop documents, and the product directions (section 9).

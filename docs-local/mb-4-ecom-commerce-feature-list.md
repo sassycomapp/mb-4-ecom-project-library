@@ -4,7 +4,7 @@ updated: "2026-11-24"
 ---
 # Mybizz Shop — Commerce Feature List
 
-Every feature of the shop: the trade part of `mb-4-ecom`, the part that makes a Mybizz application an online shop. Feature numbers F-S01 to F-S14 are used by `mb-4-ecom-commerce-schema.md` and `mb-4-ecom-commerce-lifecycles.md`; the `S` marks a shop feature.
+Every feature of the shop: the trade part of `mb-4-ecom`, the part that makes a Mybizz application an online shop. Feature numbers F-S01 to F-S16 are used by `mb-4-ecom-commerce-schema.md` and `mb-4-ecom-commerce-lifecycles.md`; the `S` marks a shop feature.
 
 **Part:** trade. Everything else a client of `mb-4-ecom` receives (website, team and roles, CRM, email, marketing, invoicing and payments, accounts, AI and voice, customer portal, dashboard, data ownership, security, design and support) is the common part of every Mybizz application, carried by the project template.
 
@@ -35,7 +35,7 @@ Every document of the shop names the parties by these terms only.
 ## Buying
 
 - **F-S04 Cart:** a cart that follows a signed-in customer across devices, with prices, discounts, delivery and tax worked out on the server at every change. An abandoned cart with an email address triggers one recovery email, through the common email sequences, with a link that restores the cart.
-- **F-S05 Checkout:** one page: email, delivery address, private or business customer, delivery option with live courier prices, discount code, order summary, acceptance of the Terms, Privacy, Returns and Delivery policies, and payment through the client's own Stripe or PayPal account, or Pay on invoice for a customer with a credit account. Guest checkout can be switched on or off. Card details never touch Mybizz. Every customer becomes, or is matched to, a contact in the CRM.
+- **F-S05 Checkout:** one page: email, delivery address, private or business customer, delivery option with live courier prices, discount code, order summary, acceptance of the Terms, Privacy, Returns and Delivery policies, and payment through the client's own Stripe or PayPal account, or Pay on invoice for a customer with a credit account, with gift cards accepted as part or full payment. Guest checkout can be switched on or off. Card details never touch Mybizz. Every customer becomes, or is matched to, a contact in the CRM.
 - **F-S06 Storefront:** shop home with featured products, category and collection pages with filters (price, option values, tags) and sorting, search, product pages with an image gallery and variant picker, cart and checkout. Verified-purchase product reviews, approved by the client before the reviews show, through the common reviews feature. Prices shown in the customer's zone display currency where the client has set one.
 
 ## After the sale
@@ -48,7 +48,12 @@ Every document of the shop names the parties by these terms only.
 
 - **F-S10 Tax:** two ways to work out tax, chosen at onboarding and changeable in Settings: the shop's own rate tables, or Stripe Tax on the client's own Stripe account, which works out the correct rate for every address and records every sale and refund for the client's tax returns, whichever payment provider took the payment. VAT numbers of business customers are accepted, with reverse charge where reverse charge applies. Choosing Stripe Tax shows a link to the Stripe Tax documentation. Choosing the shop's own tables opens a dialog that cannot be closed until the Owner clicks Accept, confirming that Mybizz is not responsible for the client's VAT obligations; the dialog links to the client's legal responsibility acknowledgement. Prices are entered with tax included or excluded, as the client chooses. Each product has a tax class (standard, reduced, zero or exempt); with the shop's own tables, each zone has a rate for each class, including the rate charged on delivery. With tax included, the customer pays the same price in every zone, and the tax inside the price is worked out at the zone's rate. Tax is shown on every order and invoice with the client's tax label and registration number.
 - **F-S11 Discounts:** codes and automatic discounts: a percentage off, a fixed amount off, free delivery, or buy X get Y. A discount can apply to the whole order or to chosen products, categories or collections, with a minimum order value, a CRM segment, first orders only, start and end dates, a total usage limit and a per-customer limit. Team members choose whether a discount combines with others.
-- **F-S12 Zones and currency:** the client groups the countries the shop sells to into zones, each zone with the zone's own tax rates and delivery options. Every sale is charged in the client's system currency. A zone may show prices in a display currency at a rate the client sets. An address outside every active zone cannot check out.
+- **F-S12 Zones and currency:** the client groups the countries the shop sells to into zones, each zone with the zone's own currency, tax rates and delivery options. The client chooses the currency each zone sells in and sets the exchange rate; prices come from the client's own price list in that currency, or are converted and rounded automatically. Customers see prices, pay, receive invoices and are refunded in the zone's currency. The client's accounts and reports stay in the client's system currency, at the exchange rate recorded on every order. An address outside every active zone cannot check out.
+
+## Selling further
+
+- **F-S15 Product feeds:** the shop's products listed on Google Shopping, Facebook, Instagram and TikTok through product feeds, one per channel and zone, rebuilt every hour with prices, stock, images and delivery charges. The client pastes each feed's web address into the channel once. Shoppers who click a product on any channel buy in the client's own shop.
+- **F-S16 Gift cards:** gift cards sold in the shop in amounts the client sets, emailed to the recipient with a message, and spent at checkout as part or full payment. Team members can issue gift cards and see every gift card's balance and history. Gift card money is paid into the client's own payment provider account, like any sale.
 
 ## Business customers and the law
 
@@ -77,8 +82,8 @@ Every document of the shop names the parties by these terms only.
 
 - **Marketplace selling** (Amazon, eBay, Takealot), **company buying teams** (several people buying on one business customer's account, with spending limits and approvals) and **built-in demand forecasting** are product directions of `mb-4-ecom` (`mb-4-ecom-architecture-report.md`, section 9).
 - **Tax filing.** The shop works out and records tax; the client files the client's own tax returns, or has a filing service or an accountant file the returns.
-- **Gift cards and store credit.**
-- **Subscriptions and repeat orders.**
+- **Selling inside other platforms' own checkouts** (TikTok Shop, marketplace checkouts): customers buy in the client's own shop.
+- **Subscriptions and repeat orders,** which belong to a separate Mybizz business.
 
 ---
 
