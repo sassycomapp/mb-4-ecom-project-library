@@ -10,7 +10,7 @@ Every table and column of the shop: the trade part of `mb-4-ecom`. Name, type an
 
 **Features:** feature numbers (F-S01 to F-S16) are those of `mb-4-ecom-commerce-feature-list.md`. The step-by-step states of carts, orders, payments, shipments, returns, discounts and stock are in `mb-4-ecom-commerce-lifecycles.md`.
 
-**Total tables:** 38
+**Total tables:** 39
 **Platform:** Anvil Data Tables. Every table has `client: none` and `server: full`: the browser never reads a table directly; server functions return rows and results.
 
 ---
@@ -33,8 +33,9 @@ Every document of the shop names the parties by these terms only.
 
 - **The common rules apply.** One instance per client, UTC datetimes, money in whole cents of the currency named on the record, credentials only in the Vault, and the naming and standard columns of [[[default:specifications-global/spec-nomenclature|Nomenclature]]](C:/dev/project-library-global/specifications-global/spec-nomenclature.md).
 - **One direction.** A shop table may link to a common table. No common table links to a shop table. Where a shop record needs a common record (a payment, an invoice, a contact), the shop table holds the link.
-- **Selling currencies.** The client's accounts and reports are in `business_profile.system_currency`. Each sales zone sells in one currency: the system currency, or another currency the client chooses, at an exchange rate the client enters. Customers in a zone see prices, pay, receive invoices and are refunded in the zone's currency. Every cart and order carries the order's currency, and every order stores the exchange rate at placing, so every amount converts to the system currency exactly for the client's accounts and reports.
-- **Prices in other currencies.** A variant's price in a zone's currency comes from an active price list in that currency, or else from the base price converted at the zone's exchange rate and rounded by the zone's rounding rule. Base prices, compare-at prices, fixed-amount discounts, minimum order amounts, credit limits and performance figures are in the system currency.
+- **Currencies.** The rule of [[[default:adr-global/adr-system-currency-selection-and-immutability|System Currency and Local Currencies]]](C:/dev/project-library-global/adr-global/adr-system-currency-selection-and-immutability.md): one system currency, set at onboarding, for books, reports and tax returns; the client prices every product in the system currency; the client sells in the system currency or, market by market on the Settings page, in a customer's local currency; for a local currency the client sets the local price, the shop shows that price and Stripe or PayPal charges that price; each sale is recorded at the system-currency amount Stripe or PayPal pays in; refunds are paid in the currency the customer paid in. The local currencies are the common table `local_currencies`; a customer's country decides the customer's currency, and a country with no local currency pays in the system currency.
+- **Prices in a local currency.** A variant's local price is the price typed in `variant_local_prices`, or else the system price at the local currency's `rate`, rounded by the local currency's `rounding`. Delivery charges, fixed-amount discounts and minimum order amounts are set in the system currency and shown in a local currency the same way. Sale prices in a local currency come from a price list in that currency.
+- **The books.** Carts, orders, refunds and gift cards carry the customer's `currency`, and the amounts of those records are in that currency. Each order's `system_amount` is the sum of the `system_amount` of the order's payments less refunds, as Stripe or PayPal report the payments through the common `payments` table. Accounts, reports, performance figures and credit limits use the system currency only.
 - **Snapshots.** An order line stores the product title, variant title, SKU, unit price and tax rate as these were when the order was placed. Later changes to the product never change a placed order.
 - **Never deleted.** Rows of `orders`, `order_items`, `shipments`, `returns`, `stock_movements` and `discount_redemptions` are never deleted; the row's status changes. A product, variant or discount that has been sold or used is archived, never deleted.
 - **Stock changes in transactions.** Every change to `stock_levels` runs inside one Anvil Data Tables transaction together with the `stock_movements` or `stock_reservations` row that explains the change, so stock can never be sold twice.
@@ -65,7 +66,7 @@ As in the common schema: `string`, `number`, `bool`, `date`, `datetime`, `media`
 | Group | Tables | Count |
 |---|---|---|
 | Shop settings | `shop_settings`, `shop_counters`, `courier_connections`, `product_feeds` | 4 |
-| Catalogue | `products`, `product_options`, `product_option_values`, `product_variants`, `product_images`, `product_categories`, `product_collections` | 7 |
+| Catalogue | `products`, `product_options`, `product_option_values`, `product_variants`, `variant_local_prices`, `product_images`, `product_categories`, `product_collections` | 8 |
 | Pricing | `price_lists`, `price_list_prices` | 2 |
 | Stock | `stock_locations`, `stock_levels`, `stock_reservations`, `stock_movements` | 4 |
 | Zones, tax and delivery | `sales_zones`, `consumer_rule_sets`, `zone_tax_rates`, `shipping_options` | 4 |
@@ -77,7 +78,7 @@ As in the common schema: `string`, `number`, `bool`, `date`, `datetime`, `media`
 | Credit accounts | `credit_applications`, `customer_accounts` | 2 |
 | Gift cards | `gift_cards`, `gift_card_transactions` | 2 |
 | Reviews and performance | `product_reviews`, `product_performance` | 2 |
-| **Total** | | **38** |
+| **Total** | | **39** |
 
 ---
 
@@ -121,12 +122,12 @@ Sequence numbers for order and return numbers. One row per counter and year.
 | `updated_at` | datetime | |
 
 ### 1.3 `product_feeds`
-A product feed: the list of the shop's products that a sales channel reads on a schedule (F-S15). One row per channel and zone.
+A product feed: the list of the shop's products that a sales channel reads on a schedule (F-S15). One row per channel and target country.
 
 | Column | Type | Notes |
 |---|---|---|
 | `channel` | string | `google` (Google Merchant Center: Google Shopping and free listings) / `meta` (Facebook and Instagram shops) / `tiktok` (TikTok catalogue) |
-| `zone_id` | link → sales_zones | The zone whose currency, prices, tax and delivery the feed shows |
+| `country_code` | string | ISO 3166-1 alpha-2; the target country, whose currency, prices, tax and delivery the feed shows |
 | `feed_token` | string | Random, unguessable part of the feed's web address |
 | `enabled` | bool | |
 | `file_id` | link → files | The latest feed file, rebuilt every hour |
@@ -234,6 +235,18 @@ One buyable version of a product: one value for each of the product's options (F
 | `updated_at` | datetime | |
 | `metadata` | simpleObject | Client-level attributes (common aspect 4) |
 
+### 2.4a `variant_local_prices`
+A local price the client types for one variant in one local currency (F-S12). Where no row exists, the local price is the system price at the local currency's `rate`, rounded.
+
+| Column | Type | Notes |
+|---|---|---|
+| `variant_id` | link → product_variants | |
+| `currency` | string | A `local_currencies.currency` |
+| `price` | number | In cents of `currency` |
+| `compare_at_price` | number | Optional, in cents of `currency` |
+| `created_at` | datetime | |
+| `updated_at` | datetime | |
+
 ### 2.5 `product_images`
 Images of a product (F-S01).
 
@@ -292,7 +305,7 @@ A set of prices that replaces variant base prices: a timed sale, or prices for o
 | `status` | string | `draft` / `active` / `ended` |
 | `starts_at` | datetime | Empty: from activation |
 | `ends_at` | datetime | Empty: until ended |
-| `currency` | string | ISO 4217; the price list applies only in zones that sell in this currency |
+| `currency` | string | ISO 4217: the system currency or a local currency; the price list applies only to customers who pay in this currency |
 | `segment_id` | link → segments | Optional; empty: every customer |
 | `created_at` | datetime | |
 | `updated_at` | datetime | |
@@ -383,9 +396,6 @@ A group of countries the shop sells to, with the zone's own tax rates and delive
 | `country_codes` | simpleObject | List of ISO 3166-1 alpha-2 codes |
 | `is_home` | bool | True for exactly one zone: the zone of `business_profile.country` |
 | `consumer_rule_set_id` | link → consumer_rule_sets | The consumer protection rules applied to private customers in this zone |
-| `currency` | string | ISO 4217 code of the currency the zone sells in; default `business_profile.system_currency` |
-| `exchange_rate` | number | Units of the zone's currency per 1 unit of the system currency, entered by the client; `1` when the zone sells in the system currency |
-| `price_rounding` | string | How converted prices are rounded: `none` / `whole` (to the nearest whole unit) / `ninety_nine` (to .99) |
 | `is_active` | bool | Inactive: checkout is closed to addresses in the zone |
 | `created_at` | datetime | |
 | `updated_at` | datetime | |
@@ -424,8 +434,8 @@ A delivery choice offered at checkout in one zone (F-S08).
 | `zone_id` | link → sales_zones | |
 | `name` | string | Shown at checkout, e.g. `Standard delivery (2–4 days)` |
 | `kind` | string | `flat` / `weight_band` / `live_rate` (the courier provider's price for the parcel) / `collection` |
-| `price` | number | In cents of the zone's currency; `0` for free; for `live_rate`, an amount added to the courier's price |
-| `free_over_amount` | number | Optional, in the zone's currency; the option is free when the cart's items total reaches this amount |
+| `price` | number | In cents of the system currency, shown in a local currency at the local currency's rate; `0` for free; for `live_rate`, an amount added to the courier's price |
+| `free_over_amount` | number | Optional, in the system currency; the option is free when the cart's items total reaches this amount |
 | `min_weight_grams` | number | For `weight_band` |
 | `max_weight_grams` | number | For `weight_band` |
 | `pickup_location_id` | link → stock_locations | For `collection` |
@@ -453,9 +463,9 @@ A shopping cart (F-S04, F-S05). A cart becomes an order when the cart's payment 
 | `status` | string | `active` / `at_payment` / `completed` / `abandoned` / `expired` |
 | `shipping_address` | simpleObject | Keys as `stock_locations.address`, plus `first_name`, `last_name`, `phone` |
 | `billing_address` | simpleObject | As `shipping_address`; empty: same as shipping |
-| `zone_id` | link → sales_zones | Set from the shipping country |
+| `zone_id` | link → sales_zones | Set from the shipping country; decides tax and delivery |
 | `shipping_option_id` | link → shipping_options | |
-| `currency` | string | The zone's currency, set from the shipping country |
+| `currency` | string | The customer's currency: the local currency of the customer's country, otherwise the system currency |
 | `discount_codes` | simpleObject | List of codes entered |
 | `gift_card_ids` | links → gift_cards | Gift cards applied to the cart |
 | `items_subtotal` | number | Recomputed on every change; all totals in cents of the cart's currency |
@@ -504,8 +514,7 @@ A customer's order (F-S07). Placed when the order's payment succeeds, or created
 | `shipping_address` | simpleObject | Snapshot at placing |
 | `billing_address` | simpleObject | Snapshot at placing |
 | `zone_id` | link → sales_zones | |
-| `currency` | string | The order's currency: the zone's currency at placing |
-| `exchange_rate` | number | Snapshot of the zone's exchange rate at placing |
+| `currency` | string | The customer's currency at placing |
 | `shipping_option_id` | link → shipping_options | |
 | `shipping_name` | string | Snapshot of the option's name |
 | `prices_include_tax` | bool | Snapshot of `shop_settings.prices_include_tax` |
@@ -516,7 +525,7 @@ A customer's order (F-S07). Placed when the order's payment succeeds, or created
 | `total` | number | |
 | `gift_card_total` | number | Amount paid by gift cards |
 | `refunded_total` | number | Sum of succeeded refunds |
-| `total_system` | number | `total` converted to the system currency at `exchange_rate`, for the client's accounts and reports |
+| `system_amount` | number | In the system currency: the sum of the `system_amount` of the order's payments less refunds, from the common `payments` table |
 | `pay_on_invoice` | bool | True: paid against the invoice on the customer's credit account |
 | `customer_account_id` | link → customer_accounts | For `pay_on_invoice` |
 | `tax_engine` | string | Snapshot of `shop_settings.tax_engine` |
@@ -683,14 +692,14 @@ A discount code or an automatic discount (F-S11).
 | `title` | string | Shown to the customer |
 | `is_automatic` | bool | True: applied without a code when the discount's conditions are met |
 | `type` | string | `percentage` / `fixed_amount` / `free_shipping` / `buy_x_get_y` |
-| `value` | number | Percentage, or amount in cents of the system currency, converted at the zone's exchange rate |
+| `value` | number | Percentage, or amount in cents of the system currency, shown in a local currency at the local currency's rate |
 | `applies_to` | string | `order` / `products` / `categories` / `collections` |
 | `product_ids` | links → products | For `products` |
 | `category_ids` | links → product_categories | For `categories` |
 | `collection_ids` | links → product_collections | For `collections` |
 | `buy_quantity` | number | For `buy_x_get_y`: units to buy |
 | `get_quantity` | number | For `buy_x_get_y`: units given at the `value` percentage off (100 = free) |
-| `min_order_amount` | number | Optional, in the system currency; the items total needed, converted at the zone's exchange rate |
+| `min_order_amount` | number | Optional, in the system currency; the items total needed, at the local currency's rate for a local-currency cart |
 | `segment_id` | link → segments | Optional; only customers in this CRM segment |
 | `first_order_only` | bool | Only a customer's first order |
 | `usage_limit` | number | Optional; total uses allowed |
@@ -771,7 +780,7 @@ A gift card sold by the shop or issued by a team member (F-S16).
 | Column | Type | Notes |
 |---|---|---|
 | `code` | string | Unique, random, 16 characters; shown in full only to the purchaser and the recipient |
-| `currency` | string | The currency of the order that bought the gift card; the gift card is spent only in zones with this currency |
+| `currency` | string | The currency of the order that bought the gift card; the gift card is spent only in carts in this currency |
 | `initial_amount` | number | In cents of the gift card's currency |
 | `balance` | number | In cents of the gift card's currency |
 | `status` | string | `active` / `used` / `expired` / `disabled` |
@@ -818,7 +827,7 @@ Daily sales figures per product, written by a nightly task for the dashboard and
 | `date` | date | |
 | `product_id` | link → products | |
 | `units_sold` | number | |
-| `revenue` | number | In cents of the system currency, net of discounts, excluding tax |
+| `revenue` | number | In cents of the system currency, from the `system_amount` of the orders' payments, net of discounts, excluding tax |
 | `units_returned` | number | |
 | `refunded` | number | In cents of the system currency |
 | `views` | number | Product page views |
