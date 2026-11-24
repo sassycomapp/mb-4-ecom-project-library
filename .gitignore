@@ -33,3 +33,6 @@ _capability_check_*.md
 .opencode/
 .gstack/
 wip/
+
+# Medusa source (downloaded from Medusa's GitHub instead)
+project-context/medusa-project/

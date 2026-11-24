@@ -1,0 +1,5 @@
+Medusa-develop.zip is an open source E-commerce platform which I should reverse engineer and reconstruct for Anvil. It's a really great e-commerce platform, and I can read more about it in important discussion with Gemini.md
+https://github.com/medusajs/medusa
+
+Rea-main.zip is a reverse engineering software by MorlutoREA for reverse engineering Medusa-Develop
+https://github.com/morluto/rea
