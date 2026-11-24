@@ -10,7 +10,7 @@ Every table and column of the shop: the trade part of `mb-4-ecom`. Name, type an
 
 **Features:** feature numbers (F-S01 to F-S16) are those of `mb-4-ecom-commerce-feature-list.md`. The step-by-step states of carts, orders, payments, shipments, returns, discounts and stock are in `mb-4-ecom-commerce-lifecycles.md`.
 
-**Total tables:** 39
+**Total tables:** 41
 **Platform:** Anvil Data Tables. Every table has `client: none` and `server: full`: the browser never reads a table directly; server functions return rows and results.
 
 ---
@@ -78,7 +78,8 @@ As in the common schema: `string`, `number`, `bool`, `date`, `datetime`, `media`
 | Credit accounts | `credit_applications`, `customer_accounts` | 2 |
 | Gift cards | `gift_cards`, `gift_card_transactions` | 2 |
 | Reviews and performance | `product_reviews`, `product_performance` | 2 |
-| **Total** | | **39** |
+| Shop policies | `returns_policy`, `delivery_policy` | 2 |
+| **Total** | | **41** |
 
 ---
 
@@ -832,6 +833,40 @@ Daily sales figures per product, written by a nightly task for the dashboard and
 | `refunded` | number | In cents of the system currency |
 | `views` | number | Product page views |
 | `add_to_cart_count` | number | |
+| `created_at` | datetime | |
+| `updated_at` | datetime | |
+
+---
+
+## 14. Shop Policies
+
+Two Clause Builder documents added by the shop, built, versioned, published and kept exactly as the Clause Builder's standard documents ([[[default:specifications-global/spec-legal-documents-and-consent|Legal Documents and Consent]]](C:/dev/project-library-global/specifications-global/spec-legal-documents-and-consent.md)). Both are linked at checkout, beside the acceptance box, and in the Stripe and PayPal checkout settings (F-S14).
+
+### 14.1 `returns_policy`
+The shop's Returns Policy: the cancellation period, how a return is started, return delivery costs, the refund deadline and the refund currency.
+
+| Column | Type | Notes |
+|---|---|---|
+| `category` | string | |
+| `title` | string | |
+| `clause` | string | |
+| `sort_order` | number | Order within the category |
+| `is_seeded` | bool | Seeded clauses can be edited, not deleted |
+| `is_active` | bool | Published |
+| `created_at` | datetime | |
+| `updated_at` | datetime | |
+
+### 14.2 `delivery_policy`
+The shop's Delivery Policy: the countries delivered to, delivery options and times, delivery charges, and what happens to a lost or damaged parcel.
+
+| Column | Type | Notes |
+|---|---|---|
+| `category` | string | |
+| `title` | string | |
+| `clause` | string | |
+| `sort_order` | number | Order within the category |
+| `is_seeded` | bool | Seeded clauses can be edited, not deleted |
+| `is_active` | bool | Published |
 | `created_at` | datetime | |
 | `updated_at` | datetime | |
 
