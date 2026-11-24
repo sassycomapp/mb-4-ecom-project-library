@@ -35,7 +35,7 @@ The shop's commerce structure follows Medusa (`medusajs.com`, v2.22.1), an open-
 | Medusa | In `mb-4-ecom` |
 |---|---|
 | API routes | Anvil server functions called by the application's forms; HTTP endpoints for provider webhooks and the management endpoints |
-| Workflows | Server functions built on pure-logic modules, so the business rules are tested on their own |
+| Workflows | Server functions built on pure-logic modules, so the business rules are tested separately |
 | Commerce modules and data models | Anvil Data Tables with model classes; behaviour that belongs to one table lives on the table's model class |
 | Event bus and subscribers | Anvil background tasks |
 | Scheduled jobs | Anvil scheduled tasks |
