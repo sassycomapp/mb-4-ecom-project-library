@@ -53,7 +53,7 @@ The shop's commerce structure follows Medusa (`medusajs.com`, v2.22.1), an open-
 - **Where a client instance runs.** Each client instance is a Docker container running the Anvil App Server on a Mybizz Hetzner Cloud application server (`CPX42`: 8 vCPU, 16 GB memory), with the client's own database in Mybizz's Ubicloud managed PostgreSQL service. An application server holds 12 places; a standard container has 1 GiB of memory and takes one place, and App 5 raises a busy container to 2 GiB (two places) automatically. Each client database user holds at most 3 database connections, with a 60-second statement timeout.
 - **Load stays in each client instance.** A client's transactions run in the client's own instance. App 2 is a code dependency and carries no client traffic, so 100 clients running 100 transactions each place 100 transactions on each instance and none on App 2.
 - **Isolation.** One client's traffic, fault or heavy query cannot slow down or expose another client.
-- **Mybizz Shop Enterprise.** A client whose shop needs more than a standard container runs on an application server of the client's own, with the container's memory and the client's database connections sized to the shop. The client instance is built from the same release image as every other client instance, so App 2 and every release stay the same.
+- **Mybizz Shop Enterprise.** A shop that is large all year runs on a Hetzner `CCX33` application server of the client's own (8 dedicated vCPU, 32 GB memory), with an 8 GiB container, the client's database connections sized to the shop, and a private test copy of the shop (catalogue and settings, no customer data) in a second container on the same server. The price, £299 a month, and the reasons for the price are in the concept document, section 7. The client instance is built from the same release image as every other client instance, so App 2 and every release stay the same.
 
 ## 4. Data design
 
@@ -80,7 +80,7 @@ The shop's commerce structure follows Medusa (`medusajs.com`, v2.22.1), an open-
 - **Webhooks** from providers (payments, shipping, tax, disputes) return 200 at once, are processed in a background task, and are idempotent by event id, so a provider's retry never charges or ships an order twice.
 - **Outbound calls** to providers retry with backoff when rate-limited. Rate limits apply per client instance.
 - **Background tasks** (stock alerts, product feeds, reports, imports) run inside the client's container and share the container's memory and database connections with the shop, so heavy tasks run in the quiet hours.
-- **Traffic spikes.** Product images and digital files are served from the client's R2 bucket, outside the container. A sudden spike of shoppers (for example a flash sale) queues on the container's 3 database connections, so the shop responds slowly at the peak. A client who plans large sales events moves to Mybizz Shop Enterprise before the event.
+- **Traffic spikes.** Product images and digital files are served from the client's R2 bucket, outside the container. A sudden spike of shoppers (for example a flash sale) queues on the container's 3 database connections, so the shop responds slowly at the peak; App 5 raises the container to 2 GiB when the spike pushes memory use past 80%. Mybizz Shop Enterprise is for a shop that is large all year, not for a short spike.
 
 ## 8. Anvil's limits, accepted
 

@@ -106,7 +106,21 @@ The common part is defined by the project template when Mybizz CS is finished. T
 - Month-to-month, no contract; cancel at any time, effective at the end of the paid month.
 - No Mybizz transaction fee and no add-ons.
 - Assisted setup, where Mybizz loads the catalogue and configures the shop, costs one month's subscription, once.
-- **Mybizz Shop Enterprise:** a client whose shop needs more than a standard client instance (very large catalogues, high order volumes or large sales events) runs on an application server of the client's own, sized to the shop. Mybizz Shop Enterprise is priced by agreement with each client: the subscription plus the cost of the dedicated server and the server's database capacity.
+- **Mybizz Shop Enterprise: £299 a month.** A shop that is large all year (a very large catalogue, heavy daily traffic, high order volumes) runs on a Hetzner `CCX33` application server of the client's own: 8 processors reserved for the one shop and 32 GB of memory. Mybizz Shop Enterprise includes:
+  - the shop's container at 8 GiB of memory, with the client's database connections sized to the shop;
+  - a private test copy of the shop on the same server, holding the shop's catalogue and settings and no customer data, where the client tries products, prices and layouts before customers see them;
+  - every feature and every release on the same day as every other client instance, built from the same release image, with no custom features.
+
+  **Why £299.** The dedicated server costs Mybizz about £139 a month with backups (section 11 of the client instance hosting specification). £299 leaves Mybizz a margin of about £160 a month, against about £113 for a standard client on a shared server, and the higher margin pays for the extra server set-up and care. A fixed price keeps the price list one rule and needs no negotiation. No custom features keeps one template for every client, so every release reaches every client the same way.
+
+  **Why a dedicated server, and not for a spike.** A dedicated server is a long-term decision for a shop that is permanently large. A flash sale is sudden and short, and a server ordered in advance does not answer the flash sale; App 5 raising the container's memory meets a short spike on the shared server.
+
+  **The pitch to the client.**
+  - A server of the shop's own: another business's busy day never slows the shop down.
+  - Built for volume: large catalogues, heavy daily traffic and high order volumes run at full speed all year.
+  - A private test shop: new products, prices and layouts are tried before customers see them.
+  - The same Mybizz Shop: every feature and every update arrives the same day as for every other client, with nothing custom to break.
+  - One fixed price: £299 a month, with no fees per sale, no traffic charges and no surprises.
 - The same price as Mybizz CS. Every Mybizz business application with the full common part carries the same price, so the Mybizz price list stays one rule: £45 for the front desk (Mybizz FDA), £119 for a full business application.
 
 ---
