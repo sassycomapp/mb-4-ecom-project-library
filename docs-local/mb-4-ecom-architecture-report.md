@@ -22,7 +22,7 @@ The shop itself is specified in three documents: `mb-4-ecom-commerce-feature-lis
 
 ## 1. What mb-4-ecom is
 
-`mb-4-ecom` is an e-commerce application that Mybizz provides to businesses that sell products. Each client receives an online shop and a back office: catalogue, cart, checkout, orders, delivery, returns, customers, discounts and payments. `mb-4-ecom` is built on Anvil.works, in Python, by PDLF.
+`mb-4-ecom` is Mybizz Shop, the e-commerce application that Mybizz provides to businesses that sell products. The concept, price and market position are in `mb-4-ecom-concept.md`. Each client receives an online shop and a back office: catalogue, cart, checkout, orders, delivery, returns, customers, discounts and payments. `mb-4-ecom` is built on Anvil.works, in Python, by PDLF.
 
 `mb-4-ecom` shares the architecture and infrastructure of `mb-3-cs` (Mybizz Consulting and Services). The two applications differ in the trade part: `mb-3-cs` centres on scheduling and bookings, `mb-4-ecom` on the shop. Whatever can be common between the two applications is kept common, in both directions ([[[default:adr-global/adr-common-architecture-across-mybizz-applications|Common Architecture Across Mybizz Applications]]](C:/dev/project-library-global/adr-global/adr-common-architecture-across-mybizz-applications.md)).
 
